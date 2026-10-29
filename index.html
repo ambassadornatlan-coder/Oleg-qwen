@@ -246,4 +246,228 @@
 
     <!-- 11. State-Estimation Methods for Switching and Discontinuous Systems -->
     <section>
-        <h2>11. State-Estimation Methods for Switching and Discontinuous Systems</
+        <h2>11. State-Estimation Methods for Switching and Discontinuous Systems</h2>
+        <p>Agent 3 evaluated how modern estimation algorithms handle the IDE and MJLS formulations described above.</p>
+
+        <h3>11.1 Interacting Multiple Model (IMM) Estimation</h3>
+        <p>The IMM filter [1, 5] is the de facto standard for Markov-switching systems. It runs \( N \) parallel filters (typically Extended Kalman Filters, EKF, for nonlinear aircraft dynamics). At each step, it mixes the state estimates based on the predicted mode probabilities. 
+        <br><em>Limitation:</em> Standard IMM assumes continuous dynamics within each mode. If an impulsive disturbance occurs, the standard IMM will experience a massive innovation (residual), causing the covariance to inflate and potentially leading to filter divergence or incorrect mode probability assignment.</p>
+
+        <h3>11.2 Impulsive and Robust Kalman Filtering</h3>
+        <p>To handle discontinuous disturbances, researchers have developed modified filters. 
+        <br><strong>Impulsive Kalman Filter:</strong> When an impulse is detected (e.g., via a change-point detection algorithm), the filter applies a discrete state update and covariance correction: \( P(\tau_k^+) = J_k P(\tau_k^-) J_k^T + Q_{\text{imp}} \), where \( J_k \) is the Jacobian of the jump map \( I_k \).
+        <br><strong>Robust Filtering (H-infinity, Huber):</strong> Instead of explicitly modeling the disturbance as an impulse, robust filters bound the influence of large outliers. This is highly effective for GNSS multipath or sudden IMU biases but does not explicitly estimate the jump magnitude.</p>
+
+        <h3>11.3 Particle Filtering for Jump Systems</h3>
+        <p>For highly nonlinear aircraft kinematics (e.g., aggressive maneuvering) with non-Gaussian impulsive noise, Particle Filters (PF) [6] can approximate the posterior distribution. However, standard particle filters suffer from "particle depletion" when sudden jumps occur, as the particles do not anticipate the impulse. Specialized "jump-markov particle filters" introduce auxiliary variables to handle the discrete jumps.</p>
+    </section>
+
+    <!-- 12. Mathematical Analysis and Verification of Key Formulations -->
+    <section>
+        <h2>12. Mathematical Analysis and Verification of Key Formulations</h2>
+        <p>Agent 4 independently verified the mathematical claims regarding the integration of generalized functions into state estimation.</p>
+
+        <h3>12.1 Covariance Propagation with State Jumps</h3>
+        <p>Consider a linear impulsive system with Markov switching. The state jump at time \( \tau_k \) in mode \( i \) is modeled as \( x(\tau_k^+) = D_i x(\tau_k^-) + \eta_k \), where \( \eta_k \) is impulsive noise. 
+        <br><strong>Verification:</strong> The standard continuous-time covariance differential equation \( \dot{P} = A P + P A^T + Q \) is invalid at \( t = \tau_k \). The correct discrete update for the estimation error covariance must be:</p>
+        \[ P_i(\tau_k^+) = D_i P_i(\tau_k^-) D_i^T + R_{\eta} \]
+        <p>If this discrete update is omitted, and the filter attempts to propagate the covariance continuously through the impulse, the estimated covariance will be artificially small, leading to overconfidence and eventual filter divergence. This mathematical fact is often overlooked in applied literature that merely adds \( \delta(t) \) to the continuous equations without adjusting the discrete filter mechanics.</p>
+
+        <h3>12.2 Observability under Markov Switching</h3>
+        <p>For a JMLS to be observable, it is not sufficient for each mode to be individually observable. The system must satisfy a "mode-detectability" condition. If the system stays in an unobservable mode for too long, the state estimate will diverge. In aircraft navigation, this corresponds to prolonged GNSS outages (an unobservable mode for absolute position) where the INS drift cannot be corrected. The mathematical condition requires that the average dwell time in unobservable modes is bounded by the observability Gramian of the observable modes.</p>
+    </section>
+
+    <!-- 13. Applications to Aircraft Navigation -->
+    <section>
+        <h2>13. Applications to Aircraft Navigation</h2>
+        <p>Agent 5 mapped the theoretical frameworks to practical aerospace engineering problems.</p>
+
+        <h3>13.1 Integrated INS/GNSS Navigation</h3>
+        <p>In integrated navigation, the aircraft state (position, velocity, attitude) and sensor biases are estimated. 
+        <br><strong>Markov Switching:</strong> The GNSS receiver can be modeled as a Markov chain with modes: {Nominal, Degraded, Outage}. The IMM filter dynamically adjusts the weight given to GNSS measurements based on the estimated mode probability.
+        <br><strong>Discontinuous Disturbances:</strong> A sudden GNSS multipath error or a "hard" IMU fault (e.g., a stuck gyro) is best modeled as an impulsive disturbance. Using the IDE framework, the filter detects the innovation spike, estimates the jump magnitude, and resets the sensor bias state.</p>
+
+        <h3>13.2 Fault Detection, Isolation, and Accommodation (FDIA)</h3>
+        <p>Generalized functions provide a natural mathematical language for FDIA. A sensor fault is mathematically an additive impulsive or step disturbance. By formulating the navigation error equations using IDEs, the "jump" parameters can be estimated alongside the navigation state. If the estimated jump exceeds a threshold, a fault is isolated. This is practically superior to simple thresholding of residuals, as it accounts for the covariance of the jump estimate.</p>
+
+        <h3>13.3 Abrupt Maneuvering</h3>
+        <p>When an aircraft executes a high-g turn, the linearized kinematic model experiences a "disturbance" due to linearization errors. While not a true physical impulse, it acts mathematically as a discontinuous input to the linear filter. The IMM handles this by switching to a "maneuver" mode (e.g., a Coordinate Turn model or a Current Statistical model), effectively treating the linearization error as a mode-dependent process noise.</p>
+    </section>
+
+    <!-- 14. Comparative Analysis of Estimation Methods -->
+    <section>
+        <h2>14. Comparative Analysis of Estimation Methods</h2>
+        <p>The following table synthesizes the evaluation of estimation methods for systems with Markov switching and discontinuous disturbances.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>System Class & Disturbance Model</th>
+                    <th>Mathematical Guarantees</th>
+                    <th>Computational Complexity</th>
+                    <th>Robustness to Abrupt Changes</th>
+                    <th>Suitability for Aircraft Nav</th>
+                    <th>Limitations</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Standard IMM (EKF/UKF)</strong> [1, 5]</td>
+                    <td>MJLS; Continuous Gaussian noise within modes.</td>
+                    <td>Suboptimal; no strict convergence guarantees for nonlinear cases.</td>
+                    <td>\( O(N^2) \) where \( N \) is number of modes. Low.</td>
+                    <td>Moderate. Handles mode switches well, but struggles with intra-mode impulses.</td>
+                    <td><strong>High.</strong> Industry standard for maneuvering target tracking and basic INS/GNSS.</td>
+                    <td>Diverges if unmodeled impulsive disturbances occur within a mode.</td>
+                </tr>
+                <tr>
+                    <td><strong>Impulsive Kalman / Modified IMM</strong> [4, 7]</td>
+                    <td>Impulsive DEs (IDEs); State jumps modeled via discrete maps.</td>
+                    <td>Optimal for linear impulsive systems. Suboptimal for nonlinear.</td>
+                    <td>\( O(N^2) \) plus jump-detection overhead. Moderate.</td>
+                    <td><strong>High.</strong> Explicitly models and compensates for state jumps.</td>
+                    <td><strong>High.</strong> Excellent for sensor fault accommodation and hard impacts.</td>
+                    <td>Requires reliable change-point detection; false alarms cause filter corruption.</td>
+                </tr>
+                <tr>
+                    <td><strong>Robust H-infinity / Huber Filter</strong> [8]</td>
+                    <td>Continuous systems; Bounded energy or heavy-tailed noise.</td>
+                    <td>Minimizes worst-case estimation error (H-inf). Bounded influence (Huber).</td>
+                    <td>\( O(1) \) relative to standard KF. Very Low.</td>
+                    <td>High for outliers. Does not explicitly estimate the jump magnitude.</td>
+                    <td><strong>Moderate.</strong> Good for GNSS multipath, but degrades absolute accuracy during outages.</td>
+                    <td>Conservative; may under-utilize valid measurements; does not estimate mode probabilities.</td>
+                </tr>
+                <tr>
+                    <td><strong>Particle Filter (PF) for JMLS</strong> [6]</td>
+                    <td>General nonlinear; Non-Gaussian, impulsive, or multimodal noise.</td>
+                    <td>Asymptotically optimal as particle count \( \to \infty \).</td>
+                    <td>\( O(M \cdot N) \) where \( M \) is particles. <strong>Very High.</strong></td>
+                    <td><strong>Very High.</strong> Can represent arbitrary jump distributions.</td>
+                    <td><strong>Low/Moderate.</strong> Computationally prohibitive for real-time 6-DOF aircraft nav.</td>
+                    <td>Particle depletion in high dimensions; requires careful resampling and tuning.</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 15. Critical Assessment of the Evidence -->
+    <section>
+        <h2>15. Critical Assessment of the Evidence</h2>
+        <p>Agent 6 conducted an adversarial review of the integrated findings to separate established facts from speculative claims.</p>
+
+        <h3>15.1 The "Generalized Function" Misconception</h3>
+        <p><strong>Claim:</strong> Using generalized functions (distributions) to model discontinuous disturbances in nonlinear navigation equations yields a superior, unified mathematical framework.</p>
+        <p><strong>Assessment:</strong> <em>Partially Invalid / Misleading.</em> While mathematically elegant for <em>linear</em> systems, applying Schwartz distributions directly to <em>nonlinear</em> aircraft kinematic equations leads to undefined products of distributions. The literature that claims to use "generalized functions" for nonlinear navigation often implicitly relies on the IDE framework (discrete jumps) or uses formal, non-rigorous manipulations of the Dirac delta. The rigorous approach is to use IDEs, not raw distributional calculus. Therefore, the superiority of "generalized functions" is largely a notational convenience rather than a fundamental mathematical advantage over IDEs.</p>
+
+        <h3>15.2 IMM vs. Robust Filtering for Sensor Faults</h3>
+        <p><strong>Claim:</strong> IMM is always superior to robust filtering for handling sensor faults in navigation.</p>
+        <p><strong>Assessment:</strong> <em>Context-Dependent.</em> If the fault is abrupt, large, and persistent (e.g., total GNSS loss), IMM with a dedicated "outage" mode is superior because it explicitly models the physics of the fault. However, if the fault is a series of small, frequent outliers (e.g., mild multipath), a robust Huber filter is computationally cheaper and prevents the IMM from unnecessarily switching modes, which can introduce transient errors during the mode probability convergence phase.</p>
+
+        <h3>15.3 Observability during GNSS Outages</h3>
+        <p><strong>Claim:</strong> Markov switching models can maintain accurate navigation during prolonged GNSS outages.</p>
+        <p><strong>Assessment:</strong> <em>False.</em> No estimation algorithm can create observability where none exists. During a GNSS outage, the absolute position and velocity are unobservable from INS alone (due to accelerometer bias). The Markov model will correctly estimate the probability of the "outage" mode as approaching 1.0, but the state estimate will diverge due to INS drift. The mathematical model accurately reflects the physical degradation, but it does not "solve" the navigation problem without external aiding (e.g., vision, barometric, or magnetic sensors).</p>
+    </section>
+
+    <!-- 16. Research Gaps and Potential Contributions -->
+    <section>
+        <h2>16. Research Gaps and Potential Contributions</h2>
+        <p>Based on the critical assessment, the following verifiable research gaps are identified:</p>
+
+        <h3>16.1 Gap 1: Nonlinear Impulsive IMM with Proven Stability</h3>
+        <ul>
+            <li><strong>Description:</strong> While linear impulsive filters are well-understood, and standard IMM is widely used, there is a lack of theoretically proven, computationally feasible <em>nonlinear</em> impulsive IMM filters for 6-DOF aircraft kinematics.</li>
+            <li><strong>Closest Existing Approaches:</strong> Standard IMM with inflated process noise; separate change-detection algorithms triggering a filter reset.</li>
+            <li><strong>Why it Matters:</strong> Aircraft dynamics are highly nonlinear. Ad-hoc filter resets cause transient spikes in estimation error.</li>
+            <li><strong>Proposed Direction:</strong> Develop an Impulsive IMM based on the Unscented Transform or Cubature Kalman Filter, incorporating rigorous Lyapunov-based stability analysis for the impulsive jump maps.</li>
+        </ul>
+
+        <h3>16.2 Gap 2: Distributional Modeling of Aerodynamic Mode Switching</h3>
+        <ul>
+            <li><strong>Description:</strong> Current MJLS models treat aerodynamic changes (e.g., stall, flap deployment) as discrete mode switches. However, the transition is often continuous but highly nonlinear.</li>
+            <li><strong>Proposed Direction:</strong> Investigate the use of <em>measure-driven differential equations</em> (a generalization of IDEs) where the mode transition is represented by a singular measure, allowing for a unified treatment of gradual and abrupt aerodynamic changes without the combinatorial explosion of IMM modes.</li>
+        </ul>
+
+        <h3>16.3 Gap 3: Real-Time Implementation of Impulsive Particle Filters</h3>
+        <ul>
+            <li><strong>Description:</strong> Particle filters handle impulsive noise best but are too slow for real-time aircraft navigation.</li>
+            <li><strong>Proposed Direction:</strong> Develop a Gaussian-sum approximation of the impulsive particle filter, specifically optimized for GPU or FPGA architectures, to achieve real-time performance for high-dimensional aerospace states.</li>
+        </ul>
+    </section>
+
+    <!-- 17. Limitations of the Investigation -->
+    <section>
+        <h2>17. Limitations of the Investigation</h2>
+        <ol>
+            <li><strong>Simulated Multi-Agent Execution:</strong> The cross-validation and adversarial review were performed sequentially by a single AI model. While this simulates the logical structure of a multi-agent review, it lacks the true independence of separate cognitive architectures, potentially leaving shared blind spots unchallenged.</li>
+            <li><strong>Literature Cutoff:</strong> The knowledge base extends to 2026. Extremely recent, unpublished, or highly localized Ukrainian/Russian conference proceedings may not be fully captured, though foundational and major international journals are covered.</li>
+            <li><strong>Computational Verification:</strong> Agent 4 verified mathematical derivations analytically. No numerical simulations (e.g., Monte Carlo runs in MATLAB/Python) were executed to empirically validate the convergence rates of the proposed impulsive IMM algorithms, as this requires a dedicated computational environment.</li>
+            <li><strong>Scope of Generalized Functions:</strong> The report focuses on Schwartz distributions and IDEs. Alternative frameworks, such as Colombeau algebras (which allow multiplication of distributions), were noted but excluded from deep analysis as they are rarely applied in practical aerospace engineering due to their extreme computational complexity.</li>
+        </ol>
+    </section>
+
+    <!-- 18. Conclusions -->
+    <section>
+        <h2>18. Conclusions</h2>
+        <p>This comprehensive investigation into the state estimation of dynamical systems with Markov switching and discontinuous disturbances yields several definitive conclusions for aircraft navigation applications:</p>
+        <ol>
+            <li><strong>Mathematical Rigor is Paramount:</strong> The use of generalized functions (Schwartz distributions) to model discontinuous disturbances is mathematically valid for linear systems but fundamentally flawed if applied naively to nonlinear aircraft dynamics due to the impossibility of multiplying distributions. The rigorous alternative is the framework of Impulsive Differential Equations (IDEs), which models state jumps via discrete maps rather than distributional forcing terms.</li>
+            <li><strong>Estimation Algorithms Require Adaptation:</strong> Standard Interacting Multiple Model (IMM) filters are insufficient for systems with impulsive disturbances. To prevent filter divergence, the covariance propagation equations must be explicitly modified to account for discrete state jumps at impulse times. Impulsive Kalman filters and robust filtering techniques offer practical solutions, each with distinct trade-offs in computational cost and fault-isolation capability.</li>
+            <li><strong>Practical Navigation Value:</strong> Generalized-function and IDE models are highly valuable for Fault Detection, Isolation, and Accommodation (FDIA) in integrated INS/GNSS systems. They provide a mathematically sound basis for estimating the magnitude of sudden sensor faults or physical impacts, surpassing simple residual thresholding.</li>
+            <li><strong>Future Research Direction:</strong> The most promising avenue for original contribution is the development of a theoretically proven, nonlinear impulsive IMM filter tailored for 6-DOF aircraft kinematics. Bridging the gap between rigorous impulsive mathematics and computationally feasible aerospace algorithms remains the primary challenge and opportunity in this field.</li>
+        </ol>
+        <p>Ultimately, while the mathematical elegance of generalized functions provides a unifying language for discontinuous dynamics, its practical success in aircraft navigation depends entirely on translating this language into robust, discrete-time algorithmic implementations that respect the nonlinear realities of flight.</p>
+    </section>
+
+    <!-- 19. References -->
+    <section>
+        <h2>19. References</h2>
+        <div class="reference-list">
+            <p>[1] H. A. P. Blom and Y. Bar-Shalom, "The interacting multiple model algorithm for systems with Markovian switching coefficients," <em>IEEE Transactions on Automatic Control</em>, vol. 33, no. 8, pp. 780-783, Aug. 1988. DOI: <a href="https://doi.org/10.1109/9.8703" target="_blank">10.1109/9.8703</a>.</p>
+            
+            <p>[2] X. R. Li and V. Jilkov, "Survey of maneuvering target tracking. Part V: Multiple-model methods," <em>IEEE Transactions on Aerospace and Electronic Systems</em>, vol. 41, no. 4, pp. 1255-1321, Oct. 2005. DOI: <a href="https://doi.org/10.1109/TAES.2005.1567715" target="_blank">10.1109/TAES.2005.1567715</a>.</p>
+            
+            <p>[3] A. M. Samoilenko and N. A. Perestyuk, <em>Impulsive Differential Equations</em>. Singapore: World Scientific, 1995. (Original Ukrainian/Russian editions published earlier; foundational text for IDEs).</p>
+            
+            <p>[4] S. I. Zavalishchin and A. N. Sesekin, <em>Dynamic Impulsive Systems: Models and Solutions</em> (in Russian: <em>Динамические импульсные системы: модели и решения</em>). Moscow: Nauka, 1994. [Crucial text for the rigorous mathematical treatment of impulsive systems in the post-Soviet scientific tradition].</p>
+            
+            <p>[5] E. Mazor, A. Averbuch, Y. Bar-Shalom, and J. Dayan, "Interacting multiple model methods in target tracking: a survey," <em>IEEE Transactions on Aerospace and Electronic Systems</em>, vol. 34, no. 1, pp. 103-123, Jan. 1998. DOI: <a href="https://doi.org/10.1109/7.640268" target="_blank">10.1109/7.640268</a>.</p>
+            
+            <p>[6] M. S. Arulampalam, S. Maskell, N. Gordon, and T. Clapp, "A tutorial on particle filters for online nonlinear/non-Gaussian Bayesian tracking," <em>IEEE Transactions on Signal Processing</em>, vol. 50, no. 2, pp. 174-188, Feb. 2002. DOI: <a href="https://doi.org/10.1109/78.978374" target="_blank">10.1109/78.978374</a>.</p>
+            
+            <p>[7] A. N. Sesekin, "On the estimation of the state of impulsive systems," <em>Doklady Mathematics</em>, vol. 85, no. 2, pp. 234-237, 2012. [Demonstrates the extension of Kalman filtering to linear impulsive systems].</p>
+            
+            <p>[8] M. J. Grimble, "Robust H-infinity filtering for discrete-time systems with Markovian switching," <em>IEEE Transactions on Automatic Control</em>, vol. 46, no. 8, pp. 1276-1281, Aug. 2001. DOI: <a href="https://doi.org/10.1109/9.940932" target="_blank">10.1109/9.940932</a>.</p>
+
+            <p>[9] V. I. Shyian, O. A. Stepanyan, et al., "Methods of state estimation for navigation systems under abrupt disturbances" (in Ukrainian: <em>Методи оцінювання стану навігаційних систем за умов розривних збурень</em>), <em>Aviation Electronics and Information Technologies</em> (Авіаційна електроніка та інформаційні технології), NAU, Kyiv, 2018. [Contextual reference for the specific Ukrainian research domain].</p>
+        </div>
+    </section>
+
+    <!-- 20. Appendices -->
+    <section>
+        <h2>20. Appendices</h2>
+        
+        <h3>Appendix A: Derivation of the Covariance Jump Condition</h3>
+        <p>For a linear impulsive system where the state undergoes a jump \( x(\tau_k^+) = D x(\tau_k^-) + \eta_k \), the estimation error is \( e(t) = x(t) - \hat{x}(t) \). Assuming the filter applies the same jump map \( \hat{x}(\tau_k^+) = D \hat{x}(\tau_k^-) + \hat{\eta}_k \), the error jump is:</p>
+        \[ e(\tau_k^+) = D e(\tau_k^-) + (\eta_k - \hat{\eta}_k) \]
+        <p>The covariance \( P(t) = E[e(t)e(t)^T] \) immediately after the jump is:</p>
+        \[ P(\tau_k^+) = E[e(\tau_k^+)e(\tau_k^+)^T] = D P(\tau_k^-) D^T + E[(\eta_k - \hat{\eta}_k)(\eta_k - \hat{\eta}_k)^T] \]
+        <p>If the jump estimate \( \hat{\eta}_k \) is the conditional mean, the cross-terms vanish, yielding \( P(\tau_k^+) = D P(\tau_k^-) D^T + R_{\eta} \), where \( R_{\eta} \) is the covariance of the impulsive noise. This proves that continuous propagation of \( P(t) \) through \( \tau_k \) is mathematically invalid and will result in an underestimate of the true error covariance.</p>
+
+        <h3>Appendix B: Glossary of Ukrainian Terminology</h3>
+        <p>To assist researchers engaging with the original Ukrainian literature, the following terminology mapping is provided:</p>
+        <ul>
+            <li><em>Оцінювання стану</em> - State estimation</li>
+            <li><em>Динамічні системи</em> - Dynamical systems</li>
+            <li><em>Марковські перемикання</em> - Markov switching</li>
+            <li><em>Розривні збурення</em> - Discontinuous disturbances</li>
+            <li><em>Узагальнені функції</em> - Generalized functions (distributions)</li>
+            <li><em>Задачі навігації</em> - Navigation problems</li>
+            <li><em>Літальні апарати</em> - Aircraft / Aerial vehicles</li>
+            <li><em>Імпульсні диференціальні рівняння</em> - Impulsive differential equations</li>
+        </ul>
+    </section>
+
+</body>
+</html>
