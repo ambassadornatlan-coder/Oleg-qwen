@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>State Estimation of Dynamical Systems with Markov Switching and Discontinuous Disturbances</title>
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --primary-color: #1a365d;
+            --secondary-color: #2c5282;
+            --accent-color: #e53e3e;
+            --bg-color: #ffffff;
+            --text-color: #2d3748;
+            --border-color: #e2e8f0;
+            --code-bg: #f7fafc;
+        }
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            line-height: 1.7;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        h1, h2, h3, h4 {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            color: var(--primary-color);
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+        h1 { font-size: 2.2rem; border-bottom: 3px solid var(--primary-color); padding-bottom: 0.5rem; }
+        h2 { font-size: 1.7rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.3rem; }
+        h3 { font-size: 1.3rem; color: var(--secondary-color); }
+        p { margin-bottom: 1.2rem; text-align: justify; }
+        .title-page { text-align: center; margin-bottom: 3rem; padding: 2rem; border: 2px solid var(--primary-color); }
+        .title-page h1 { border: none; font-size: 2.5rem; margin-bottom: 1rem; }
+        .title-page .meta { font-style: italic; color: #718096; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 0.75rem;
+            text-align: left;
+            vertical-align: top;
+        }
+        th { background-color: var(--primary-color); color: white; font-family: 'Helvetica Neue', sans-serif; }
+        tr:nth-child(even) { background-color: #f8fafc; }
+        .abstract, .executive-summary {
+            background-color: var(--code-bg);
+            padding: 1.5rem;
+            border-left: 4px solid var(--secondary-color);
+            margin: 1.5rem 0;
+        }
+        .keyword {
+            display: inline-block;
+            background-color: #edf2f7;
+            color: var(--secondary-color);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .agent-note {
+            background-color: #fff5f5;
+            border: 1px dashed var(--accent-color);
+            padding: 1rem;
+            margin: 1rem 0;
+            font-size: 0.95rem;
+        }
+        .agent-note strong { color: var(--accent-color); }
+        .reference-list { font-size: 0.9rem; line-height: 1.5; }
+        .reference-list p { margin-bottom: 0.8rem; text-align: left; }
+        code {
+            background-color: var(--code-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        blockquote {
+            border-left: 3px solid #cbd5e0;
+            margin: 1.5rem 0;
+            padding: 0.5rem 1.5rem;
+            color: #4a5568;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Title Page -->
+    <section class="title-page">
+        <h1>Methods for State Estimation of Dynamical Systems with Markov Switching and Discontinuous Disturbances Based on Generalized Functions in Aircraft Navigation Problems</h1>
+        <p class="meta">Original Ukrainian Topic:<br>
+        <em>«Методи оцінювання стану динамічних систем з марковськими перемиканнями та розривними збуреннями на основі узагальнених функцій у задачах навігації літальних апаратів.»</em></p>
+        <p class="meta">Comprehensive Scientific Research Report</p>
+        <p class="meta">Prepared by: Multi-Agent AI Scientific Research Team</p>
+        <p class="meta">Date: October 29, 2026</p>
+    </section>
+
+    <!-- 2. Abstract -->
+    <section>
+        <h2>2. Abstract</h2>
+        <div class="abstract">
+            <p>This report presents a comprehensive investigation into the state estimation of dynamical systems characterized by Markovian switching and discontinuous disturbances, with a specific focus on the application of generalized functions (distributions) and their relevance to aircraft navigation. By simulating a multidisciplinary research team, we critically evaluate the mathematical foundations of Markov jump linear systems (MJLS), the rigorous treatment of impulsive and discontinuous dynamics via Schwartz distributions and impulsive differential equations (IDEs), and modern state-estimation algorithms such as the Interacting Multiple Model (IMM) filter. The investigation reveals that while generalized functions provide a mathematically elegant framework for unifying continuous dynamics, discrete mode switches, and instantaneous state jumps (e.g., sensor faults or abrupt maneuvers), their direct application in nonlinear estimation requires careful handling of distributional products. We identify critical research gaps in combining rigorous impulsive IDE frameworks with suboptimal IMM filters for nonlinear aircraft kinematics, providing a structured roadmap for future aerospace navigation research.</p>
+        </div>
+    </section>
+
+    <!-- 3. Keywords -->
+    <section>
+        <h2>3. Keywords</h2>
+        <span class="keyword">Markov Jump Systems</span>
+        <span class="keyword">Generalized Functions</span>
+        <span class="keyword">Impulsive Differential Equations</span>
+        <span class="keyword">State Estimation</span>
+        <span class="keyword">Interacting Multiple Model (IMM)</span>
+        <span class="keyword">Aircraft Navigation</span>
+        <span class="keyword">Sensor Fusion</span>
+        <span class="keyword">Schwartz Distributions</span>
+    </section>
+
+    <!-- 4. Executive Summary -->
+    <section>
+        <h2>4. Executive Summary</h2>
+        <div class="executive-summary">
+            <p>Aircraft navigation systems operate in highly dynamic environments subject to abrupt changes in vehicle dynamics (e.g., severe maneuvers, structural damage) and sensor degradation (e.g., GNSS outages, inertial sensor faults). These phenomena are mathematically modeled as Markov switching and discontinuous disturbances. This report synthesizes current knowledge on estimating the state of such systems using generalized functions.</p>
+            <p><strong>Key Findings:</strong></p>
+            <ul>
+                <li><strong>Mathematical Rigor:</strong> Modeling disturbances as Dirac delta distributions (generalized functions) is mathematically valid for linear impulsive systems but becomes highly problematic in nonlinear systems due to the Schwartz impossibility of multiplying distributions. Impulsive Differential Equations (IDEs) provide the correct rigorous framework.</li>
+                <li><strong>Estimation Algorithms:</strong> The Interacting Multiple Model (IMM) algorithm remains the industry standard for Markov-switching systems. However, standard IMM assumes continuous dynamics within modes. Adapting IMM to handle distributional/impulsive state jumps requires modified covariance update equations at impulse times.</li>
+                <li><strong>Navigation Applicability:</strong> Generalized functions are highly effective for modeling instantaneous sensor faults (outliers) and hard impacts. However, they are less suitable for modeling gradual sensor degradation or continuous turbulence, which are better served by stochastic jump-diffusion or robust filtering techniques.</li>
+                <li><strong>Research Gaps:</strong> There is a distinct lack of theoretically proven, computationally feasible nonlinear impulsive IMM filters specifically tailored for the 6-DOF (Degree of Freedom) kinematic models of aircraft.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 5. Introduction and Research Objectives -->
+    <section>
+        <h2>5. Introduction and Research Objectives</h2>
+        <p>The estimation of the state of dynamical systems in aerospace applications is a cornerstone of modern control theory and navigation. Traditional models assume smooth, continuous dynamics and Gaussian noise. However, aircraft navigation systems frequently encounter abrupt changes: sudden GNSS signal loss, abrupt shifts in aerodynamic coefficients due to flap deployment, or instantaneous biases in inertial measurement units (IMUs). Furthermore, the underlying system may switch between distinct operational modes (e.g., takeoff, cruise, landing, or degraded sensor configurations).</p>
+        <p>The original Ukrainian research topic, <em>«Методи оцінювання стану динамічних систем з марковськими перемиканнями та розривними збуреннями на основі узагальнених функцій у задачах навігації літальних апаратів»</em>, proposes the use of <strong>generalized functions</strong> (distributions in the sense of Schwartz) to model these discontinuous disturbances and mode switches. This approach aims to unify the mathematical treatment of continuous flows, discrete jumps, and stochastic switching.</p>
+        <p>The primary objective of this report is to critically evaluate the mathematical validity, algorithmic feasibility, and practical utility of this approach. We aim to distinguish established mathematical facts from speculative applications, ensuring that the use of generalized functions in navigation is grounded in rigorous analysis rather than mere formal manipulation.</p>
+    </section>
+
+    <!-- 6. Scope and Research Questions -->
+    <section>
+        <h2>6. Scope and Research Questions</h2>
+        <p>The scope of this investigation encompasses the intersection of stochastic hybrid systems, distribution theory, and aerospace navigation. The research is guided by the following questions:</p>
+        <ol>
+            <li>What are the rigorous mathematical foundations for representing discontinuous disturbances and Markov switching using generalized functions?</li>
+            <li>Under what conditions do distributional models yield well-posed differential equations, and when do they lead to mathematical contradictions (e.g., undefined products of distributions)?</li>
+            <li>How can state-estimation algorithms, particularly Bayesian filters and the IMM, be adapted to handle state jumps induced by distributional inputs?</li>
+            <li>What is the practical value of generalized-function models in aircraft navigation compared to conventional piecewise-continuous or robust filtering approaches?</li>
+            <li>What are the verifiable research gaps in the current literature regarding nonlinear impulsive estimation for aerospace applications?</li>
+        </ol>
+    </section>
+
+    <!-- 7. Research Methodology and Literature-Search Strategy -->
+    <section>
+        <h2>7. Research Methodology and Literature-Search Strategy</h2>
+        <p>This report was generated by simulating a multidisciplinary research team of six specialized AI agents. <em>Note: As a single AI model, these agents were executed sequentially within a single inference pass to simulate cross-validation and adversarial review, rather than running as independent parallel processes.</em></p>
+        
+        <h3>7.1 Agent Roles</h3>
+        <ul>
+            <li><strong>Agent 1 (Stochastic Systems):</strong> Focused on Markov Jump Linear Systems (MJLS), transition topologies, and hybrid stochastic processes.</li>
+            <li><strong>Agent 2 (Generalized Functions):</strong> Focused on Schwartz distributions, impulsive differential equations (IDEs), and the mathematical limits of distributional calculus.</li>
+            <li><strong>Agent 3 (State Estimation):</strong> Evaluated IMM, particle filters, and robust Kalman variants for switching and impulsive systems.</li>
+            <li><strong>Agent 4 (Math Verification):</strong> Independently verified the mathematical derivations, specifically checking for invalid distributional multiplications and covariance consistency.</li>
+            <li><strong>Agent 5 (Aircraft Navigation):</strong> Mapped the mathematical models to physical aerospace phenomena (INS/GNSS integration, sensor faults, maneuvers).</li>
+            <li><strong>Agent 6 (Research Director):</strong> Synthesized the findings, resolved contradictions, and enforced academic rigor and structural compliance.</li>
+        </ul>
+
+        <h3>7.2 Literature Search Strategy</h3>
+        <p>A systematic search was simulated across major scientific databases (IEEE Xplore, ScienceDirect, SpringerLink, SIAM, arXiv) up to the knowledge cutoff in 2026. Search queries included combinations of: <code>"Markov jump systems" AND "state estimation"</code>, <code>"impulsive differential equations" AND "filtering"</code>, <code>"generalized functions" AND "navigation"</code>, and <code>"interacting multiple model" AND "discontinuous"</code>. Priority was given to foundational texts (e.g., Blom & Bar-Shalom, Samoilenko & Perestyuk) and peer-reviewed journal articles. Preprints were used only when corroborated by subsequent published work.</p>
+    </section>
+
+    <!-- 8. Mathematical Preliminaries and Notation -->
+    <section>
+        <h2>8. Mathematical Preliminaries and Notation</h2>
+        <p>To ensure mathematical rigor, we establish the following notation and definitions.</p>
+        <ul>
+            <li>\( x(t) \in \mathbb{R}^n \): System state vector.</li>
+            <li>\( r(t) \in \mathcal{S} = \{1, 2, \dots, N\} \): Discrete Markov chain representing the system mode.</li>
+            <li>\( \Pi = [\pi_{ij}] \): Transition rate matrix (generator) for a continuous-time Markov chain, where \( \pi_{ij} \geq 0 \) for \( i \neq j \) and \( \sum_{j} \pi_{ij} = 0 \).</li>
+            <li>\( \mathcal{D}(\mathbb{R}) \): The space of infinitely differentiable functions with compact support (test functions).</li>
+            <li>\( \mathcal{D}'(\mathbb{R}) \): The space of Schwartz distributions (generalized functions), defined as continuous linear functionals on \( \mathcal{D}(\mathbb{R}) \).</li>
+            <li>\( \delta(t) \): The Dirac delta distribution, defined by \( \langle \delta, \phi \rangle = \phi(0) \) for all \( \phi \in \mathcal{D} \).</li>
+            <li>\( H(t) \): The Heaviside step function, whose distributional derivative is \( \delta(t) \).</li>
+        </ul>
+        <p><strong>Crucial Distinction:</strong> A <em>discontinuous function</em> (like \( H(t) \)) is a locally integrable function that can be embedded in \( \mathcal{D}' \). A <em>generalized function</em> (like \( \delta(t) \)) is a distribution that cannot be represented by a classical function. In navigation, sensor faults are often modeled as jumps in the state (requiring \( \delta(t) \) in the derivative), while mode switches are modeled by the Markov chain \( r(t) \).</p>
+    </section>
+
+    <!-- 9. Markov-Switching Dynamical Systems -->
+    <section>
+        <h2>9. Markov-Switching Dynamical Systems</h2>
+        <p>Agent 1's analysis confirms that Markov Jump Linear Systems (MJLS) are the standard mathematical framework for systems with abrupt structural changes. The continuous-time dynamics are given by:</p>
+        \[ \dot{x}(t) = A(r(t))x(t) + B(r(t))u(t) + G(r(t))w(t) \]
+        <p>where \( w(t) \) is a continuous white noise process. The mode \( r(t) \) evolves according to a continuous-time Markov chain with transition rates \( \pi_{ij} \).</p>
+        
+        <h3>9.1 Observability and Estimation</h3>
+        <p>In aircraft navigation, the mode \( r(t) \) is rarely perfectly observable. For instance, a GNSS receiver might switch between "nominal," "multipath degraded," and "outage" modes. This leads to the <em>Hidden Markov Model (HMM)</em> or <em>Jump-Markov Linear System (JMLS)</em> formulation, where the mode must be estimated jointly with the continuous state \( x(t) \). The exact Bayesian filter for JMLS requires maintaining a Gaussian mixture with an exponentially growing number of components. The Interacting Multiple Model (IMM) algorithm [1, 5] provides a computationally feasible suboptimal solution by merging these components at each time step.</p>
+    </section>
+
+    <!-- 10. Discontinuous Disturbances and Generalized Functions -->
+    <section>
+        <h2>10. Discontinuous Disturbances and Generalized Functions</h2>
+        <p>Agent 2's investigation into generalized functions reveals both the power and the severe mathematical pitfalls of this approach in the context of the Ukrainian research topic.</p>
+
+        <h3>10.1 The Distributional Approach</h3>
+        <p>Proponents of using generalized functions in navigation argue that discontinuous disturbances (e.g., a sudden sensor bias shift or a physical impact) can be modeled as distributional inputs. A common formal representation is:</p>
+        \[ d(t) = d_{\text{reg}}(t) + \sum_{k} a_k \delta(t - \tau_k) \]
+        <p>where \( d_{\text{reg}}(t) \) is a regular (continuous or piecewise continuous) disturbance, and the sum represents impulsive disturbances at times \( \tau_k \) with amplitudes \( a_k \).</p>
+
+        <h3>10.2 The Mathematical Hazard: Products of Distributions</h3>
+        <p>Agent 4 (Math Verification) identified a critical flaw in naive applications of generalized functions to <em>nonlinear</em> aircraft dynamics. If the system is nonlinear, the dynamics might be written as:</p>
+        \[ \dot{x}(t) = f(x(t), r(t)) + d(t) \]
+        <p>If \( d(t) \) contains a Dirac delta, the state \( x(t) \) will experience a jump at \( \tau_k \), meaning \( x(t) \) is discontinuous. Consequently, the term \( f(x(t), r(t)) \) becomes discontinuous. In the theory of Schwartz distributions, <strong>the product of two distributions (or a discontinuous function and a distribution) is generally undefined</strong> (Schwartz's impossibility theorem). Therefore, the expression \( f(x(t))\delta(t-\tau_k) \) is mathematically meaningless in the standard distributional sense.</p>
+
+        <h3>10.3 The Rigorous Alternative: Impulsive Differential Equations (IDEs)</h3>
+        <p>To resolve this, the literature (e.g., Samoilenko & Perestyuk [3], Zavalishchin & Sesekin [4]) shifts from distributional forcing terms to <em>Impulsive Differential Equations (IDEs)</em>. Instead of putting \( \delta(t) \) in the derivative, the system is defined by a continuous flow interrupted by discrete jump conditions:</p>
+        \[
+        \begin{cases}
+        \dot{x}(t) = f(x(t), r(t)) + g(x(t), r(t))u(t), & t \neq \tau_k \\
+        \Delta x(\tau_k) = x(\tau_k^+) - x(\tau_k^-) = I_k(x(\tau_k^-)), & t = \tau_k
+        \end{cases}
+        \]
+        <p>This formulation avoids the product of distributions entirely. The "generalized function" aspect is retained in the sense that the solution \( x(t) \) is a discontinuous function (a sum of a continuous function and a step function), and its derivative in the sense of distributions contains Dirac deltas. However, the <em>equations of motion</em> are formulated using classical functions and discrete maps, ensuring mathematical well-posedness.</p>
+    </section>
+
+    <!-- 11. State-Estimation Methods for Switching and Discontinuous Systems -->
+    <section>
+        <h2>11. State-Estimation Methods for Switching and Discontinuous Systems</
